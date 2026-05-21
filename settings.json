@@ -1,0 +1,127 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/dev/null -l)",
+      "Bash(node -e \"const tw = require\\(''''./tailwind.config.js''''\\); const colors = tw.theme?.extend?.colors || tw.theme?.colors || {}; const keys = Object.keys\\(colors\\).filter\\(k => k.toLowerCase\\(\\).includes\\(''''alias''''\\) || k.toLowerCase\\(\\).includes\\(''''allias''''\\)\\); console.log\\(keys\\)\")",
+      "Bash(git show:*)",
+      "Bash(git checkout:*)",
+      "Bash(PORT=3002 npm run start:dev)",
+      "Bash(lsof -ti:3001)",
+      "Bash(ps -p 77113 -o comm=)",
+      "Bash(grep -r \"allias-level1\\\\|allias-inverse\\\\|allias-input\\\\|allias-default\\\\|allias-secondary\\\\|table-cellOpacity\\\\|table-hoverCell\\\\|neutral-secondaryPress\\\\|font-roboto\" tailwind.config.*)",
+      "Bash(grep -v \"\\\\-dark$\")",
+      "Bash(grep -E \"\\\\-dark$|\\\\-allias-|\\\\-brand-|\\\\-positive-|\\\\-negative-|\\\\-warning-|\\\\-info-|\\\\-neutral-|\\\\-table-|\\\\-other-|\\\\-board-|\\\\-opacity-|\\\\-component-|\\\\-custom-\")",
+      "Bash(python3 -c \":*)",
+      "Bash(for token:*)",
+      "Bash(python3:*)",
+      "Bash(grep \"\\\\-dark$\")",
+      "Bash(npx tsc:*)",
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest init --help)",
+      "Bash(npx shadcn@latest init -y)",
+      "Bash(npx shadcn@latest add button input textarea select badge separator dialog tabs table)",
+      "Bash(npx shadcn@latest add card)",
+      "Bash(grep -rn 'zinc\\\\|indigo\\\\|#[0-9a-fA-F]\\\\{3,6\\\\}\\\\|text-white\\\\b' /Users/nguyenlanhanh/Documents/code/thuc-hanh/my-knowledge-blog/components '--include=*.tsx')",
+      "Bash(npm config:*)",
+      "Read(//Users/nguyenlanhanh/**)",
+      "WebFetch(domain:github.com)",
+      "Bash(gitnexus status:*)",
+      "Bash(bash -c ':*)",
+      "Bash(grep -rn \"UPDATE_DERIVATIVE_TRANSACTIONS\\\\|UPDATE_DERIVATIVE_INFO\" /Users/nguyenlanhanh/Documents/code/vnd/dboard/src/sagas/*.js)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git branch:*)",
+      "Bash(git remote:*)",
+      "Bash(git push:*)",
+      "Bash(git -C /Users/nguyenlanhanh/Documents/test status)",
+      "Bash(rm -rf /Users/nguyenlanhanh/Documents/test/dboard/.git /Users/nguyenlanhanh/Documents/test/my-board/.git)",
+      "Bash(git -C /Users/nguyenlanhanh/Documents/test rm --cached dboard)",
+      "Bash(git -C /Users/nguyenlanhanh/Documents/test add dboard/ my-board/)",
+      "Bash(git -C /Users/nguyenlanhanh/Documents/test commit -m \"add dboard and my-board folders\")",
+      "Bash(git -C /Users/nguyenlanhanh/Documents/test push)",
+      "Bash(git rm:*)",
+      "Bash(mkdir -p /Users/nguyenlanhanh/Documents/code/vnd/dboard/.claude/reviews && ls /Users/nguyenlanhanh/Documents/code/vnd/dboard/.claude/reviews/fix-board-ex*.md 2>/dev/null || echo \"no existing\")",
+      "Bash(mkdir -p /Users/nguyenlanhanh/Documents/code/vnd/dboard/.claude/reviews)",
+      "Bash(npx gitnexus *)"
+    ],
+    "additionalDirectories": [
+      "/Users/nguyenlanhanh/Documents/code/thuc-hanh/my-knowledge-blog",
+      "/Users/nguyenlanhanh/Documents/code/thuc-hanh/my-knowledge-blog/app/api/posts",
+      "/Users/nguyenlanhanh/Documents/code/thuc-hanh/my-knowledge-blog/app/posts",
+      "/Users/nguyenlanhanh/Documents/code/thuc-hanh/my-knowledge-blog/.claude/skills",
+      "/Users/nguyenlanhanh/.claude",
+      "/Users/nguyenlanhanh/Documents/code/vnd/dboard/.claude/reviews"
+    ]
+  },
+  "hooks": {
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/hud-agent-track.mjs start"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/hud-agent-track.mjs stop"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd=$(jq -r '.tool_input.command'); if echo \"$cmd\" | grep -q 'git commit'; then gitnexus analyze --embeddings 2>/dev/null || true; fi",
+            "if": "Bash(git commit*)",
+            "timeout": 120,
+            "statusMessage": "Updating GitNexus index...",
+            "async": true
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/nguyenlanhanh/.claude/hooks/gitnexus/gitnexus-hook.cjs\"",
+            "timeout": 10,
+            "statusMessage": "Checking GitNexus index freshness..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Grep|Glob|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/nguyenlanhanh/.claude/hooks/gitnexus/gitnexus-hook.cjs\"",
+            "timeout": 10,
+            "statusMessage": "Enriching with GitNexus graph context..."
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/nguyenlanhanh/.claude/statusline.sh"
+  },
+  "enabledPlugins": {
+    "figma@claude-plugins-official": true
+  },
+  "effortLevel": "low",
+  "skipDangerousModePermissionPrompt": true
+}

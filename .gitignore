@@ -1,0 +1,27 @@
+# Sensitive / private data
+history.jsonl
+sessions/
+projects/
+cache/
+ide/
+telemetry/
+session-env/
+shell-snapshots/
+file-history/
+backups/
+debug/
+downloads/
+statsig/
+plans/
+tasks/
+kg/
+
+# macOS
+.DS_Store
+
+# Auth / secrets
+mcp-needs-auth-cache.json
+.last-cleanup
+
+# Compiled/zip artifacts
+*.zip
